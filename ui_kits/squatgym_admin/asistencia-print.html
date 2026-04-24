@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>SquatGym — Registro de Asistencia · PDF</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset + base ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  background: #0A0A0C;
+  color: #F0F0F0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 30% 10%, rgba(255,107,0,.04), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 2px);
+  background-attachment: fixed;
+}
+
+/* ── Page layout ──────────────────────────────── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 12mm 13mm 10mm;
+}
+
+/* ── Topbar ───────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 14px;
+}
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .04em; }
+.logo span { color: #FF6B00; }
+.top-meta { font-size: 10px; color: #9A9AA3; letter-spacing: .08em; text-transform: uppercase; text-align: right; line-height: 1.6; }
+
+/* ── Page header ─────────────────────────────── */
+.ph { margin-bottom: 12px; }
+.ph-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: .03em; line-height: 1;
+}
+.ph-title span { color: #FF6B00; }
+.ph-sub { color: #B0B0B8; font-size: 11.5px; margin-top: 3px; }
+
+/* ── Class hero ──────────────────────────────── */
+.class-hero {
+  background: linear-gradient(135deg, rgba(255,107,0,.10), rgba(255,107,0,.02) 55%, transparent 100%);
+  border: 1px solid rgba(255,107,0,.25);
+  border-left: 3px solid #FF6B00;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hero-label {
+  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  color: #9A9AA3; font-weight: 700; margin-bottom: 3px;
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+  letter-spacing: .04em; line-height: 1;
+}
+.hero-title .acc { color: #FF6B00; }
+.hero-meta { color: #C9C9CF; font-size: 11px; margin-top: 3px; }
+.hero-stats { display: flex; gap: 18px; flex-shrink: 0; }
+.hero-stat { text-align: center; }
+.hero-stat-val {
+  font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1;
+}
+.hero-stat-lbl {
+  font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: #9A9AA3; font-weight: 700; margin-top: 1px;
+}
+
+/* ── Progress bar ────────────────────────────── */
+.progress-wrap { margin-bottom: 14px; }
+.progress-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 5px;
+}
+.progress-label { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #9A9AA3; font-weight: 700; }
+.progress-pct { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .04em; color: #FF6B00; }
+.progress-bar { height: 5px; background: rgba(255,255,255,.06); }
+.progress-fill-ok  { height: 5px; background: #22C55E; display: inline-block; }
+.progress-fill-err { height: 5px; background: #E8343A; display: inline-block; }
+
+/* ── Alumno grid ─────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.card {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.07);
+  border-left: 3px solid rgba(255,255,255,.07);
+  padding: 8px 9px;
+  break-inside: avoid;
+}
+.card.presente { border-left-color: #22C55E; background: rgba(34,197,94,.04); }
+.card.ausente  { border-left-color: #E8343A; background: rgba(232,52,58,.04);  }
+.card.deudor   { border-left-color: #E8343A; }
+
+.card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #FF6B00, #FF3A00);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 11px; color: #000; letter-spacing: .04em;
+}
+.card-name { font-size: 11.5px; font-weight: 600; color: #F0F0F0; }
+.card-plan { font-size: 9.5px; color: #B0B0B8; margin-top: 1px; }
+.deudor-tag {
+  font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: #E8343A; margin-left: 4px;
+}
+.card-num { font-family: 'Bebas Neue', sans-serif; font-size: 11px; color: #444; letter-spacing: .04em; margin-left: auto; flex-shrink: 0; }
+
+.card-status {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.status-btn {
+  padding: 5px 0;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  text-align: center; border: 1px solid rgba(255,255,255,.08); color: #777;
+}
+.status-btn.active-ok  { background: #22C55E; border-color: #22C55E; color: #000; }
+.status-btn.active-err { background: #E8343A; border-color: #E8343A; color: #fff; }
+
+/* ── Footer summary ──────────────────────────── */
+.footer-summary {
+  border: 1px solid rgba(255,107,0,.2);
+  border-top: 2px solid #FF6B00;
+  background: rgba(14,14,16,.97);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  break-inside: avoid;
+  margin-top: 4px;
+}
+.summary-stats { display: flex; gap: 24px; align-items: center; }
+.sum-stat-val {
+  font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1;
+}
+.sum-stat-lbl { font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase; color: #9A9AA3; font-weight: 700; }
+.confirm-box {
+  border: 1px solid rgba(34,197,94,.4);
+  padding: 8px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.confirm-label {
+  font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: .04em;
+  color: #22C55E;
+}
+.confirm-time { font-size: 9px; color: #B0B0B8; letter-spacing: .08em; }
+
+/* ── Print ────────────────────────────────────── */
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  body  { background: #0A0A0C; }
+  .page { padding: 10mm 12mm; }
+  .no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">SQUAT<span>GYM</span></div>
+    <div class="top-meta">
+      Sede Centro · Prof. Martín Acosta<br>
+      Emitido: 23/04/2026 · 19:47 hs
+    </div>
+  </div>
+
+  <!-- Page header -->
+  <div class="ph">
+    <div class="ph-title">TOMAR <span>ASISTENCIA</span></div>
+    <div class="ph-sub">Registro diario de presentes · Prof. Martín Acosta · Sala 2 · Sede Centro</div>
+  </div>
+
+  <!-- Class hero -->
+  <div class="class-hero">
+    <div>
+      <div class="hero-label">Clase en curso</div>
+      <div class="hero-title">MUSCULACIÓN <span class="acc">· VIERNES 17/04</span></div>
+      <div class="hero-meta">19:00 – 20:30 · 12 alumnos inscriptos</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val" style="color:#22C55E">8</div>
+        <div class="hero-stat-lbl">Presentes</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" style="color:#E8343A">2</div>
+        <div class="hero-stat-lbl">Ausentes</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" style="color:#F59E0B">2</div>
+        <div class="hero-stat-lbl">Pendientes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="progress-label">Progreso · 10 de 12 marcados</span>
+      <span class="progress-pct">67% <span style="font-family:'Inter';font-size:9px;color:#9A9AA3;letter-spacing:.1em">DE PRESENTES</span></span>
+    </div>
+    <div class="progress-bar">
+      <span class="progress-fill-ok"  style="width:66.7%"></span><span class="progress-fill-err" style="width:16.6%"></span>
+    </div>
+  </div>
+
+  <!-- Alumno grid -->
+  <div class="grid">
+
+    <!-- 01 García, María Laura — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">GM</div>
+        <div><div class="card-name">García, María Laura</div><div class="card-plan">Full Access</div></div>
+        <div class="card-num">#01</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 02 López, Carlos Andrés — Ausente · Deudor -->
+    <div class="card ausente deudor">
+      <div class="card-top">
+        <div class="avatar">LC</div>
+        <div><div class="card-name">López, Carlos Andrés</div><div class="card-plan">Musculación <span class="deudor-tag">· Deudor</span></div></div>
+        <div class="card-num">#02</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn">✔ Presente</div>
+        <div class="status-btn active-err">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 03 Pérez, Sofía — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">PS</div>
+        <div><div class="card-name">Pérez, Sofía Belén</div><div class="card-plan">Zumba</div></div>
+        <div class="card-num">#03</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 04 Martínez, Juan Pablo — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">MJ</div>
+        <div><div class="card-name">Martínez, Juan Pablo</div><div class="card-plan">Kickboxing</div></div>
+        <div class="card-num">#04</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 05 Rodríguez, Valentina — Pendiente · Deudor -->
+    <div class="card deudor">
+      <div class="card-top">
+        <div class="avatar">RV</div>
+        <div><div class="card-name">Rodríguez, Valentina</div><div class="card-plan">Spinning <span class="deudor-tag">· Deudor</span></div></div>
+        <div class="card-num">#05</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 06 Fernández, Lucas — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">FL</div>
+        <div><div class="card-name">Fernández, Lucas Iván</div><div class="card-plan">CrossFit</div></div>
+        <div class="card-num">#06</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 07 Gómez, Camila — Ausente -->
+    <div class="card ausente">
+      <div class="card-top">
+        <div class="avatar">GC</div>
+        <div><div class="card-name">Gómez, Camila Rocío</div><div class="card-plan">Yoga</div></div>
+        <div class="card-num">#07</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn">✔ Presente</div>
+        <div class="status-btn active-err">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 08 Silva, Nicolás — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">SN</div>
+        <div><div class="card-name">Silva, Nicolás</div><div class="card-plan">Full Access</div></div>
+        <div class="card-num">#08</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 09 Benítez, Agustina — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">BA</div>
+        <div><div class="card-name">Benítez, Agustina</div><div class="card-plan">Musculación</div></div>
+        <div class="card-num">#09</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 10 Castro, Mateo — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">CM</div>
+        <div><div class="card-name">Castro, Mateo</div><div class="card-plan">Musculación</div></div>
+        <div class="card-num">#10</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 11 Herrera, Julieta — Presente -->
+    <div class="card presente">
+      <div class="card-top">
+        <div class="avatar">HJ</div>
+        <div><div class="card-name">Herrera, Julieta</div><div class="card-plan">Full Access</div></div>
+        <div class="card-num">#11</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn active-ok">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+    <!-- 12 Ibarra, Franco — Pendiente · Deudor -->
+    <div class="card deudor">
+      <div class="card-top">
+        <div class="avatar">IF</div>
+        <div><div class="card-name">Ibarra, Franco</div><div class="card-plan">Musculación <span class="deudor-tag">· Deudor</span></div></div>
+        <div class="card-num">#12</div>
+      </div>
+      <div class="card-status">
+        <div class="status-btn">✔ Presente</div>
+        <div class="status-btn">✗ Ausente</div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- Footer summary -->
+  <div class="footer-summary">
+    <div class="summary-stats">
+      <div>
+        <div class="sum-stat-val" style="color:#22C55E">8</div>
+        <div class="sum-stat-lbl">Presentes</div>
+      </div>
+      <div>
+        <div class="sum-stat-val" style="color:#E8343A">2</div>
+        <div class="sum-stat-lbl">Ausentes</div>
+      </div>
+      <div>
+        <div class="sum-stat-val" style="color:#F59E0B">2</div>
+        <div class="sum-stat-lbl">Pendientes</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.07);height:40px;align-self:center"></div>
+      <div style="color:#B0B0B8;font-size:11px;max-width:200px;line-height:1.5">
+        2 alumnos sin marcar. Se registrarán como <strong>pendientes</strong>.
+      </div>
+    </div>
+    <div class="confirm-box">
+      <div class="confirm-label">✔ ASISTENCIA REGISTRADA</div>
+      <div class="confirm-time">Viernes 17/04/2026 · 20:31 hs</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// Wait for fonts, then print
+document.fonts.ready.then(() => {
+  setTimeout(() => { window.print(); }, 600);
+});
+</script>
+</body>
+</html>

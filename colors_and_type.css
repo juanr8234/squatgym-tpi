@@ -1,0 +1,203 @@
+/* ============================================================
+   SquatGym Design System — colors_and_type.css
+   Source of truth: sources/squatgym_prototype.html :root vars.
+   ============================================================ */
+
+/* ── Fonts ────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Base palette ─────────────────────────────────────── */
+  --sg-bg:    #0A0A0A;   /* App background — deep black */
+  --sg-sur:   #131313;   /* Surface 1 — cards, sidebar */
+  --sg-sur2:  #1C1C1C;   /* Surface 2 — inputs, nested */
+  --sg-txt:   #F0F0F0;   /* Primary text on dark */
+  --sg-mut:   #777777;   /* Muted / secondary text, labels */
+  --sg-bor:   rgba(255,255,255,0.07); /* Hairline borders */
+
+  /* ── Brand accent (orange) ────────────────────────────── */
+  --sg-acc:   #FF6B00;   /* Primary orange */
+  --sg-acc2:  #FF3A00;   /* Deep orange — gradient end, 2nd stop */
+  --sg-acc-tint: rgba(255,107,0,0.08);  /* hover tint */
+  --sg-acc-15:   rgba(255,107,0,0.15);
+  --sg-acc-30:   rgba(255,107,0,0.30);
+
+  /* ── Semantic colors ──────────────────────────────────── */
+  --sg-ok:    #22C55E;   /* Success / Habilitada / Presente */
+  --sg-err:   #E8343A;   /* Error / Deudor / Ausente */
+  --sg-warn:  #F59E0B;   /* Warning / Vencimientos */
+
+  --sg-ok-tint:   rgba(34,197,94,0.12);
+  --sg-err-tint:  rgba(232,52,58,0.12);
+  --sg-warn-tint: rgba(245,158,11,0.12);
+  --sg-mut-tint:  rgba(119,119,119,0.12);
+
+  /* ── Type families ────────────────────────────────────── */
+  --sg-ff-display: 'Bebas Neue', 'Barlow Condensed', Impact, sans-serif;
+  --sg-ff-body:    'Barlow', system-ui, -apple-system, sans-serif;
+  --sg-ff-cond:    'Barlow Condensed', 'Barlow', sans-serif;
+
+  /* ── Type scale (base = 16px) ─────────────────────────── */
+  --sg-fs-xs:   0.68rem;   /* 10.9px — labels / role badge */
+  --sg-fs-sm:   0.78rem;   /* 12.5px — btn, small meta */
+  --sg-fs-base: 0.85rem;   /* 13.6px — body, table cells */
+  --sg-fs-md:   1rem;      /* 16px   — fsec title */
+  --sg-fs-lg:   1.1rem;    /* 17.6px — tbl title */
+  --sg-fs-xl:   1.6rem;    /* 25.6px — login title, confirm */
+  --sg-fs-2xl:  2rem;      /* 32px   — page title (ph-title) */
+  --sg-fs-3xl:  2.2rem;    /* 35.2px — stat value */
+  --sg-fs-4xl:  2.6rem;    /* 41.6px — login logo */
+  --sg-fs-hero: 22rem;     /* Decorative "SG" login */
+
+  /* ── Letter-spacing (tracked CAPS) ────────────────────── */
+  --sg-ls-display: 0.04em;  /* Bebas display headings */
+  --sg-ls-eyebrow: 0.18em;  /* sidebar section labels */
+  --sg-ls-label:   0.10em;  /* form labels */
+  --sg-ls-btn:     0.08em;  /* button text */
+  --sg-ls-badge:   0.08em;  /* badge / status */
+  --sg-ls-stat:    0.15em;  /* stat label */
+
+  /* ── Weights ──────────────────────────────────────────── */
+  --sg-fw-normal:    400;
+  --sg-fw-medium:    500;
+  --sg-fw-semibold:  600;
+  --sg-fw-bold:      700;
+  --sg-fw-black:     900;
+
+  /* ── Spacing tokens (not in original; canonicalized) ──── */
+  --sg-sp-1: 0.25rem;  /* 4px  */
+  --sg-sp-2: 0.5rem;   /* 8px  */
+  --sg-sp-3: 0.75rem;  /* 12px */
+  --sg-sp-4: 1rem;     /* 16px */
+  --sg-sp-5: 1.5rem;   /* 24px */
+  --sg-sp-6: 2rem;     /* 32px */
+
+  /* ── Borders / radii (system is mostly sharp) ─────────── */
+  --sg-radius-0: 0;         /* Default — SquatGym is geometric/sharp */
+  --sg-radius-sm: 2px;
+  --sg-radius-round: 50%;   /* only for avatars */
+
+  /* ── Signature clip-path (primary CTA bevel) ──────────── */
+  --sg-clip-cta: polygon(0 0, calc(100% - 7px) 0, 100% 100%, 7px 100%);
+  --sg-clip-login: polygon(16% 0, 100% 0, 100% 100%, 0 100%);
+
+  /* ── Elevation (subtle on dark) ───────────────────────── */
+  --sg-shadow-blur: 0 0 0 1px var(--sg-bor);  /* hairline */
+  --sg-shadow-md:   0 4px 12px rgba(0,0,0,0.4);
+  --sg-shadow-lg:   0 12px 32px rgba(0,0,0,0.55);
+
+  /* ── Motion ───────────────────────────────────────────── */
+  --sg-dur-fast: 150ms;
+  --sg-dur-base: 200ms;
+  --sg-dur-slow: 300ms;
+  --sg-ease:     cubic-bezier(.4,0,.2,1);
+
+  /* ── Z-index ──────────────────────────────────────────── */
+  --sg-z-sticky: 100;
+  --sg-z-modal:  200;
+}
+
+/* ============================================================
+   Semantic type classes — map tokens → named roles
+   Use either these classes OR inline CSS vars.
+   ============================================================ */
+
+.sg-display-1 {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-4xl);
+  letter-spacing: var(--sg-ls-display);
+  line-height: 1;
+  color: var(--sg-txt);
+}
+
+.sg-display-2, .sg-h1 {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-2xl);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  color: var(--sg-txt);
+}
+
+.sg-h2 {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-xl);
+  letter-spacing: var(--sg-ls-display);
+  line-height: 1.05;
+  color: var(--sg-txt);
+}
+
+.sg-h3 {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-lg);
+  letter-spacing: var(--sg-ls-display);
+  color: var(--sg-txt);
+}
+
+.sg-h4 {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-md);
+  letter-spacing: var(--sg-ls-display);
+  color: var(--sg-acc); /* fsec-t pattern */
+}
+
+.sg-eyebrow {
+  font-family: var(--sg-ff-body);
+  font-size: var(--sg-fs-xs);
+  font-weight: var(--sg-fw-bold);
+  letter-spacing: var(--sg-ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--sg-mut);
+}
+
+.sg-stat-label {
+  font-size: 0.65rem;
+  letter-spacing: var(--sg-ls-stat);
+  text-transform: uppercase;
+  color: var(--sg-mut);
+  font-weight: var(--sg-fw-bold);
+}
+
+.sg-stat-value {
+  font-family: var(--sg-ff-display);
+  font-size: var(--sg-fs-3xl);
+  line-height: 1;
+  color: var(--sg-txt);
+}
+
+.sg-body {
+  font-family: var(--sg-ff-body);
+  font-size: var(--sg-fs-base);
+  color: var(--sg-txt);
+  line-height: 1.5;
+}
+
+.sg-body-sm {
+  font-family: var(--sg-ff-body);
+  font-size: var(--sg-fs-sm);
+  color: var(--sg-txt);
+  line-height: 1.5;
+}
+
+.sg-mut {
+  color: var(--sg-mut);
+  font-size: var(--sg-fs-sm);
+}
+
+.sg-label {
+  font-family: var(--sg-ff-body);
+  font-size: var(--sg-fs-xs);
+  font-weight: var(--sg-fw-bold);
+  letter-spacing: var(--sg-ls-label);
+  text-transform: uppercase;
+  color: var(--sg-mut);
+}
+
+/* Brand highlight — wrap portion of display heading in <span> */
+.sg-accent { color: var(--sg-acc); }
+
+/* Semantic text colors */
+.sg-c-ok   { color: var(--sg-ok); }
+.sg-c-err  { color: var(--sg-err); }
+.sg-c-warn { color: var(--sg-warn); }
+.sg-c-acc  { color: var(--sg-acc); }
+.sg-c-mut  { color: var(--sg-mut); }

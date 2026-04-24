@@ -1,0 +1,40 @@
+@import url('../colors_and_type.css');
+
+html, body { margin:0; padding:0; background: var(--sg-bg); color: var(--sg-txt); font-family: var(--sg-ff-body); }
+.card { padding: 20px; min-height: 110px; box-sizing: border-box; }
+.row { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+.col { display:flex; flex-direction:column; gap:8px; }
+
+/* Replicated component styles from prototype — canonical */
+.sg-btn {
+  font-family: var(--sg-ff-body);
+  font-size: var(--sg-fs-sm);
+  font-weight: var(--sg-fw-semibold);
+  letter-spacing: var(--sg-ls-btn);
+  text-transform: uppercase;
+  padding: .6rem 1.2rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: all var(--sg-dur-fast);
+}
+.sg-btn--primary { background: var(--sg-acc); color:#000; clip-path: var(--sg-clip-cta); }
+.sg-btn--danger  { background: var(--sg-err); color:#fff; clip-path: var(--sg-clip-cta); }
+.sg-btn--success { background: var(--sg-ok);  color:#000; clip-path: var(--sg-clip-cta); }
+.sg-btn--secondary { background: transparent; color: var(--sg-txt); border:1px solid var(--sg-bor); }
+
+.sg-badge {
+  padding: .18rem .55rem; font-size: 0.65rem;
+  letter-spacing: var(--sg-ls-badge); text-transform: uppercase;
+  font-weight: var(--sg-fw-bold); display: inline-block;
+}
+.sg-badge--ok   { background: var(--sg-ok-tint);   color: var(--sg-ok);   border:1px solid rgba(34,197,94,.3); }
+.sg-badge--err  { background: var(--sg-err-tint);  color: var(--sg-err);  border:1px solid rgba(232,52,58,.3); }
+.sg-badge--warn { background: var(--sg-warn-tint); color: var(--sg-warn); border:1px solid rgba(245,158,11,.3); }
+.sg-badge--mut  { background: var(--sg-mut-tint);  color: var(--sg-mut);  border:1px solid rgba(119,119,119,.3); }
+
+.swatch { display:flex; align-items:center; gap:10px; }
+.swatch-box { width: 48px; height: 48px; border:1px solid var(--sg-bor); flex-shrink:0; }
+.swatch-meta { font-size: 11px; line-height: 1.4; }
+.swatch-name { font-weight: 700; color: var(--sg-txt); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.swatch-hex { color: var(--sg-mut); font-family: 'Barlow Condensed', monospace; }

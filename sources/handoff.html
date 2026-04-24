@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SquatGym — Documento de Handoff · TPI Diseño 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0A; --sur:#131313; --sur2:#1C1C1C;
+  --txt:#F0F0F0; --mut:#9FA0A8; --bor:rgba(255,255,255,.08);
+  --acc:#FF6B00; --acc2:#FF3A00;
+  --ok:#22C55E; --err:#E8343A; --warn:#F59E0B;
+  --ff-d:'Bebas Neue',Impact,sans-serif;
+  --ff-b:'Inter',system-ui,sans-serif;
+}
+body{
+  background:var(--bg);color:var(--txt);font-family:var(--ff-b);
+  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--acc);text-decoration:none}
+
+/* ── PRINT ────────────────────────────────────── */
+@media print{
+  body{background:#fff;color:#111;font-size:11pt}
+  .no-print{display:none!important}
+  .page{page-break-after:always;box-shadow:none!important}
+  :root{--bg:#fff;--sur:#f5f5f5;--sur2:#eee;--txt:#111;--mut:#555;--bor:#ddd;--acc:#E65C00}
+  h1,h2,h3{color:#111}
+  .chip{border-color:#ccc}
+}
+
+/* ── LAYOUT ───────────────────────────────────── */
+.page{max-width:960px;margin:0 auto;padding:3rem 2.5rem;border-bottom:1px solid var(--bor)}
+.page:last-child{border-bottom:none}
+.cover{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(145deg,#0A0A0A 60%,rgba(255,107,0,.06) 100%);
+  position:relative;overflow:hidden;
+}
+.cover::before{
+  content:'';position:absolute;top:0;right:0;width:42%;bottom:0;
+  background:linear-gradient(135deg,#C23A00,#FF6B00 55%,#FF8A2E);
+  clip-path:polygon(20% 0,100% 0,100% 100%,0 100%);
+  opacity:.12;
+}
+
+/* ── TYPE ─────────────────────────────────────── */
+h1{font-family:var(--ff-d);font-size:3.2rem;letter-spacing:.04em;line-height:1}
+h1 span{color:var(--acc)}
+h2{font-family:var(--ff-d);font-size:1.8rem;letter-spacing:.04em;color:var(--acc);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--bor)}
+h3{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);font-weight:700;margin:1.2rem 0 .6rem}
+p{margin-bottom:.8rem;color:#C9C9CF;font-size:.9rem;line-height:1.65}
+strong{color:var(--txt);font-weight:600}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;background:rgba(255,255,255,.07);padding:.1rem .4rem;border-radius:4px;color:var(--acc)}
+
+/* ── SECTIONS ─────────────────────────────────── */
+.meta{display:flex;gap:.5rem .9rem;flex-wrap:wrap;margin:1rem 0 2rem}
+.meta-item{font-size:.75rem;color:#B0B0B8;letter-spacing:.04em}
+.meta-item strong{color:var(--txt)}
+.sec-rule{display:flex;align-items:center;gap:.6rem;margin:1.5rem 0 .8rem}
+.sec-rule::after{content:'';flex:1;height:1px;background:var(--bor)}
+.sec-rule span{font-family:var(--ff-d);font-size:1rem;letter-spacing:.04em;color:var(--mut)}
+
+/* ── TOKENS ───────────────────────────────────── */
+.token-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.7rem;margin-bottom:1.2rem}
+.token-card{background:var(--sur);border:1px solid var(--bor);padding:.8rem;border-radius:6px}
+.token-swatch{height:36px;border-radius:4px;margin-bottom:.5rem}
+.token-name{font-family:ui-monospace,Menlo,monospace;font-size:.72rem;color:var(--acc);font-weight:600}
+.token-val{font-size:.72rem;color:var(--mut);margin-top:.1rem}
+.token-desc{font-size:.7rem;color:#777;margin-top:.15rem}
+
+.spacing-grid{display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem}
+.sp-item{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.sp-bar{background:rgba(255,107,0,.35);border:1px solid rgba(255,107,0,.4);border-radius:2px;width:24px}
+.sp-label{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;color:var(--mut);text-align:center}
+
+.type-scale{margin-bottom:1.2rem}
+.type-row{display:flex;align-items:baseline;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--bor)}
+.type-row:last-child{border-bottom:none}
+.type-token{font-family:ui-monospace,Menlo,monospace;font-size:.68rem;color:var(--acc);width:70px;flex-shrink:0}
+.type-spec{font-size:.65rem;color:var(--mut);width:120px;flex-shrink:0}
+.type-sample{flex:1}
+
+/* ── COMPONENT TABLE ──────────────────────────── */
+.comp-table{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:.82rem}
+.comp-table th{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);padding:.55rem .8rem;text-align:left;border-bottom:1px solid var(--bor);font-weight:700;background:rgba(255,255,255,.02)}
+.comp-table td{padding:.6rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
+.comp-table tr:hover td{background:rgba(255,107,0,.02)}
+.chip{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:20px;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
+.chip-ok{color:var(--ok);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08)}
+.chip-warn{color:var(--warn);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)}
+.chip-err{color:var(--err);border-color:rgba(232,52,58,.3);background:rgba(232,52,58,.08)}
+.chip-acc{color:var(--acc);border-color:rgba(255,107,0,.3);background:rgba(255,107,0,.08)}
+.chip-mut{color:var(--mut);border-color:rgba(159,160,168,.3);background:rgba(159,160,168,.08)}
+
+/* ── PERMS TABLE ──────────────────────────────── */
+.perm-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:1.2rem}
+.perm-table th{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding:.5rem .7rem;text-align:center;border-bottom:1px solid var(--bor);font-weight:700}
+.perm-table th:first-child{text-align:left}
+.perm-table td{padding:.5rem .7rem;border-bottom:1px solid rgba(255,255,255,.03);text-align:center}
+.perm-table td:first-child{text-align:left;font-weight:500}
+.perm-y{color:var(--ok);font-size:1rem}
+.perm-n{color:rgba(255,255,255,.15);font-size:1rem}
+
+/* ── BREAKPOINTS ──────────────────────────────── */
+.bp-timeline{display:flex;gap:0;margin:1rem 0 1.5rem;border:1px solid var(--bor);overflow:hidden;border-radius:6px}
+.bp-seg{flex:1;padding:.7rem .5rem;text-align:center;border-right:1px solid var(--bor);font-size:.7rem}
+.bp-seg:last-child{border-right:none}
+.bp-seg strong{display:block;font-family:var(--ff-d);font-size:1rem;letter-spacing:.04em;margin-bottom:.2rem}
+.bp-seg.active{background:rgba(255,107,0,.08);color:var(--acc)}
+.bp-seg.active strong{color:var(--acc)}
+.bp-desc{color:var(--mut);font-size:.65rem;margin-top:.2rem}
+
+/* ── REQ TABLE ────────────────────────────────── */
+.req-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:1rem}
+.req-table th{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding:.5rem .7rem;text-align:left;border-bottom:1px solid var(--bor);font-weight:700}
+.req-table td{padding:.55rem .7rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
+.req-table .req-id{font-family:ui-monospace,Menlo,monospace;color:var(--acc);font-size:.75rem;white-space:nowrap}
+
+/* ── MOTION ───────────────────────────────────── */
+.motion-row{display:flex;gap:1rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--bor);font-size:.82rem}
+.motion-row:last-child{border-bottom:none}
+.motion-token{font-family:ui-monospace,Menlo,monospace;color:var(--acc);font-size:.72rem;width:160px;flex-shrink:0}
+.motion-val{color:var(--txt);width:120px;flex-shrink:0}
+.motion-use{color:var(--mut);font-size:.75rem}
+
+/* ── PRINT BTN ────────────────────────────────── */
+.print-btn{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  background:linear-gradient(180deg,#FF7A1A,#E65C00);color:#000;
+  border:none;padding:.8rem 1.4rem;font-family:var(--ff-b);font-weight:700;
+  font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 100%,7px 100%);
+  box-shadow:0 4px 18px rgba(255,107,0,.4);z-index:100;
+  display:flex;align-items:center;gap:.45rem;
+}
+.print-btn:hover{filter:brightness(1.1)}
+
+/* ── ALERT BOX ────────────────────────────────── */
+.alert-box{padding:.75rem 1rem;border-left:3px solid;margin-bottom:.9rem;font-size:.82rem;line-height:1.5;display:flex;gap:.6rem}
+.al-info{background:rgba(255,107,0,.07);border-color:var(--acc);color:var(--acc)}
+.al-warn{background:rgba(245,158,11,.07);border-color:var(--warn);color:var(--warn)}
+.al-ok{background:rgba(34,197,94,.07);border-color:var(--ok);color:var(--ok)}
+
+/* ── FOOTER ───────────────────────────────────── */
+.doc-footer{text-align:center;padding:2rem;color:#555;font-size:.72rem;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ PORTADA ══════════════ -->
+<div class="page cover">
+  <div style="position:relative;z-index:1">
+    <div style="font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:1rem;font-weight:700">TPI DISEÑO · 2026</div>
+    <h1>SQUAT<span>GYM</span></h1>
+    <div style="font-family:var(--ff-d);font-size:1.4rem;letter-spacing:.04em;color:var(--mut);margin-top:.3rem">Sistema Integrado de Gestión · Módulo Alumnos y Clases</div>
+    <div style="margin:2rem 0;height:2px;width:80px;background:var(--acc)"></div>
+    <div style="font-family:var(--ff-d);font-size:1.8rem;letter-spacing:.04em;margin-bottom:.5rem">DOCUMENTO DE HANDOFF</div>
+    <p style="max-width:480px;font-size:.95rem;color:#B0B0B8">Especificación técnica y de diseño para el equipo de desarrollo. Incluye tokens, componentes, estados, permisos, breakpoints y referencias a requisitos de la ERS.</p>
+    <div class="meta" style="margin-top:2rem">
+      <div class="meta-item"><strong>Versión:</strong> 4.0</div>
+      <div class="meta-item"><strong>Fecha:</strong> 23/04/2026</div>
+      <div class="meta-item"><strong>Módulo:</strong> Alumnos y Clases (Req. 3.1.11–3.1.28)</div>
+      <div class="meta-item"><strong>Stack:</strong> HTML / Vanilla JS / CSS custom properties</div>
+      <div class="meta-item"><strong>A11y target:</strong> WCAG 2.1 AA</div>
+    </div>
+    <div style="margin-top:2rem;padding:1rem 1.2rem;background:rgba(255,107,0,.06);border:1px solid rgba(255,107,0,.18);border-left:3px solid var(--acc);font-size:.82rem;color:#C9C9CF;max-width:520px">
+      <strong style="color:var(--acc)">Archivos fuente:</strong><br>
+      <code>ui_kits/squatgym_admin/index-v4.html</code> — Prototipo completo v4<br>
+      <code>colors_and_type.css</code> — Tokens de color y tipografía<br>
+      <code>sources/DIAGNOSTICO_UX.md</code> — Auditoría UX/a11y<br>
+      <code>sources/PLAN_MEJORAS.md</code> — Plan de fases
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 1. TOKENS DE COLOR ══════════════ -->
+<div class="page">
+  <h2>01 · Tokens de Color</h2>
+
+  <h3>Colores Base</h3>
+  <div class="token-grid">
+    <div class="token-card"><div class="token-swatch" style="background:#0A0A0A;border:1px solid #333"></div><div class="token-name">--bg</div><div class="token-val">#0A0A0A</div><div class="token-desc">Fondo global</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#131313"></div><div class="token-name">--sur</div><div class="token-val">#131313</div><div class="token-desc">Superficie — cards, sidebar</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#1C1C1C"></div><div class="token-name">--sur2</div><div class="token-val">#1C1C1C</div><div class="token-desc">Superficie elevada — inputs</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#F0F0F0"></div><div class="token-name">--txt</div><div class="token-val">#F0F0F0</div><div class="token-desc">Texto principal · 18.4:1 ✅</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#9FA0A8"></div><div class="token-name">--mut</div><div class="token-val">#9FA0A8</div><div class="token-desc">Texto secundario · 5.1:1 ✅</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:rgba(255,255,255,.08);border:1px solid #333"></div><div class="token-name">--bor</div><div class="token-val">rgba(255,255,255,.08)</div><div class="token-desc">Bordes y divisores</div></div>
+  </div>
+
+  <h3>Colores de Marca</h3>
+  <div class="token-grid">
+    <div class="token-card"><div class="token-swatch" style="background:#FF6B00"></div><div class="token-name">--acc</div><div class="token-val">#FF6B00</div><div class="token-desc">Naranja primario · acción</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#FF3A00"></div><div class="token-name">--acc2</div><div class="token-val">#FF3A00</div><div class="token-desc">Naranja secundario · gradiente</div></div>
+  </div>
+
+  <h3>Colores Semánticos</h3>
+  <div class="token-grid">
+    <div class="token-card"><div class="token-swatch" style="background:#22C55E"></div><div class="token-name">--ok</div><div class="token-val">#22C55E</div><div class="token-desc">Éxito — habilitado, presente</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#E8343A"></div><div class="token-name">--err</div><div class="token-val">#E8343A</div><div class="token-desc">Error — deudor, ausente, baja</div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#F59E0B"></div><div class="token-name">--warn</div><div class="token-val">#F59E0B</div><div class="token-desc">Alerta — vencimiento próximo</div></div>
+  </div>
+
+  <div class="alert-box al-info">
+    <strong>Nota de contraste:</strong> <code>--mut</code> fue actualizado de #777 a #9FA0A8 (Diagnóstico UX, issue C9) para alcanzar ratio 5.1:1 sobre <code>--sur</code> y cumplir WCAG 2.1 AA.
+  </div>
+</div>
+
+<!-- ══════════════ 2. TIPOGRAFÍA ══════════════ -->
+<div class="page">
+  <h2>02 · Tipografía</h2>
+
+  <h3>Familias</h3>
+  <table class="comp-table" style="margin-bottom:1.5rem">
+    <thead><tr><th>Token</th><th>Familia</th><th>Uso</th><th>Pesos</th></tr></thead>
+    <tbody>
+      <tr><td><code>--ff-d</code></td><td><strong>Bebas Neue</strong></td><td>Titulares, stats, logo, secciones</td><td>400 (única)</td></tr>
+      <tr><td><code>--ff-b</code></td><td><strong>Inter</strong></td><td>Cuerpo, labels, botones, badges</td><td>400 · 500 · 600 · 700</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Escala tipográfica</h3>
+  <div class="type-scale">
+    <div class="type-row">
+      <span class="type-token">display</span>
+      <span class="type-spec">Bebas · 3.2rem · 1</span>
+      <span class="type-sample" style="font-family:'Bebas Neue';font-size:2.2rem;letter-spacing:.04em">SQUAT<span style="color:var(--acc)">GYM</span></span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">h1-screen</span>
+      <span class="type-spec">Bebas · 2rem · 1</span>
+      <span class="type-sample" style="font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:.03em">GESTIÓN DE <span style="color:var(--acc)">ALUMNOS</span></span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">h2-section</span>
+      <span class="type-spec">Bebas · 1.15rem · 1</span>
+      <span class="type-sample" style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:.04em;color:var(--acc)">Datos Personales</span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">body-lg</span>
+      <span class="type-spec">Inter 500 · .95rem · 1.6</span>
+      <span class="type-sample" style="font-size:.88rem;font-weight:500">García, María Laura</span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">body-base</span>
+      <span class="type-spec">Inter 400 · .88rem · 1.6</span>
+      <span class="type-sample" style="font-size:.82rem;color:#C9C9CF">DNI 40.123.456 · Plan Full Access · Sede Centro</span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">label</span>
+      <span class="type-spec">Inter 600 · .7rem · — · UC</span>
+      <span class="type-sample" style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8B8BF">Apellido *</span>
+    </div>
+    <div class="type-row">
+      <span class="type-token">caption</span>
+      <span class="type-spec">Inter 700 · .65rem · — · UC</span>
+      <span class="type-sample" style="font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--mut)">Total Alumnos</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 3. ESPACIADO ══════════════ -->
+<div class="page">
+  <h2>03 · Espaciado y Bordes</h2>
+
+  <h3>Escala de espaciado (6 pasos)</h3>
+  <div class="spacing-grid">
+    <div class="sp-item"><div class="sp-bar" style="height:4px"></div><div class="sp-label">--sp-1<br>4px</div></div>
+    <div class="sp-item"><div class="sp-bar" style="height:8px"></div><div class="sp-label">--sp-2<br>8px</div></div>
+    <div class="sp-item"><div class="sp-bar" style="height:12px"></div><div class="sp-label">--sp-3<br>12px</div></div>
+    <div class="sp-item"><div class="sp-bar" style="height:16px"></div><div class="sp-label">--sp-4<br>16px</div></div>
+    <div class="sp-item"><div class="sp-bar" style="height:24px"></div><div class="sp-label">--sp-5<br>24px</div></div>
+    <div class="sp-item"><div class="sp-bar" style="height:32px"></div><div class="sp-label">--sp-6<br>32px</div></div>
+  </div>
+  <p>Regla: todos los márgenes, paddings y gaps del prototipo deben derivar de estos 6 valores. Evitar valores ad-hoc (Diagnóstico UX, issue C31).</p>
+
+  <h3>Radio de bordes</h3>
+  <table class="comp-table">
+    <thead><tr><th>Token</th><th>Valor</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><code>--r-sm</code></td><td>3px</td><td>Badges, kbd</td></tr>
+      <tr><td><code>--r-md</code></td><td>6px</td><td>Botones secundarios, action buttons, modal-close</td></tr>
+      <tr><td><code>--r-lg</code></td><td>8–12px</td><td>Inputs, selects, cards Quick Action, pay-method</td></tr>
+    </tbody>
+  </table>
+  <div class="alert-box al-info"><strong>Clip-path:</strong> Solo los CTAs primarios (<code>.btn-p</code>, <code>.btn-d</code>, <code>.btn-ok</code>) usan <code>polygon(0 0, calc(100% - 7px) 0, 100% 100%, 7px 100%)</code>. Los demás elementos usan <code>border-radius</code> estándar.</div>
+
+  <h3>Elevación / Sombras</h3>
+  <table class="comp-table">
+    <thead><tr><th>Token</th><th>Valor</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><code>--shadow-sm</code></td><td><code>0 1px 2px rgba(0,0,0,.3)</code></td><td>Cards planas</td></tr>
+      <tr><td><code>--shadow-md</code></td><td><code>0 4px 12px rgba(0,0,0,.4)</code></td><td>Quick Actions hover</td></tr>
+      <tr><td><code>--shadow-lg</code></td><td><code>0 12px 32px rgba(0,0,0,.5)</code></td><td>Modales, confirm-box</td></tr>
+      <tr><td><code>--shadow-acc</code></td><td><code>0 6px 18px rgba(255,107,0,.45)</code></td><td>Botón primario hover</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ 4. MOTION ══════════════ -->
+<div class="page">
+  <h2>04 · Motion y Z-Index</h2>
+
+  <h3>Duraciones</h3>
+  <div class="motion-row"><span class="motion-token">--dur-fast</span><span class="motion-val">150ms</span><span class="motion-use">Hover de botones y action buttons</span></div>
+  <div class="motion-row"><span class="motion-token">--dur-base</span><span class="motion-val">200ms</span><span class="motion-use">Transiciones generales, sidebar items</span></div>
+  <div class="motion-row"><span class="motion-token">--dur-slow</span><span class="motion-val">300ms</span><span class="motion-use">Animación del pseudo-element en Quick Actions, sidebar drawer</span></div>
+  <div class="motion-row" style="border:none"><span class="motion-token">--ease-out</span><span class="motion-val">cubic-bezier(.4,0,.2,1)</span><span class="motion-use">Curva de relajación para todas las transiciones</span></div>
+
+  <h3>Z-Index</h3>
+  <table class="comp-table" style="margin-top:.5rem">
+    <thead><tr><th>Elemento</th><th>Z-Index</th></tr></thead>
+    <tbody>
+      <tr><td>Topbar <code>.topbar</code></td><td>100</td></tr>
+      <tr><td>Sticky footer asistencia <code>.att-footer</code></td><td>50</td></tr>
+      <tr><td>Sidebar drawer mobile <code>.sidebar</code></td><td>150</td></tr>
+      <tr><td>Overlay sidebar <code>.sidebar-overlay</code></td><td>149</td></tr>
+      <tr><td>Modal backdrop <code>.modal-backdrop</code></td><td>200</td></tr>
+      <tr><td>Toasts <code>.toast-wrap</code></td><td>300</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert-box al-warn"><strong>prefers-reduced-motion:</strong> El CSS aplica <code>animation-duration: .01ms; transition-duration: .01ms</code> cuando el sistema operativo tiene activada la opción de reducir movimiento.</div>
+</div>
+
+<!-- ══════════════ 5. COMPONENTES ══════════════ -->
+<div class="page">
+  <h2>05 · Componentes</h2>
+
+  <table class="comp-table">
+    <thead><tr><th>Componente</th><th>Clase/s</th><th>Estados</th><th>Variantes</th><th>A11y</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Button primario</strong></td>
+        <td><code>.btn .btn-p</code></td>
+        <td>default · hover · active · :focus-visible</td>
+        <td>—</td>
+        <td><code>&lt;button&gt;</code> · clip-path CTA</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Button secundario</strong></td>
+        <td><code>.btn .btn-s</code></td>
+        <td>default · hover · :focus-visible</td>
+        <td>—</td>
+        <td><code>&lt;button&gt;</code></td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Button peligro / éxito</strong></td>
+        <td><code>.btn-d</code> / <code>.btn-ok</code></td>
+        <td>default · hover</td>
+        <td>—</td>
+        <td><code>&lt;button&gt;</code> · semántica por color</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Action Button</strong></td>
+        <td><code>.ab .ab-v/e/d</code></td>
+        <td>default · hover</td>
+        <td>ver / editar / baja</td>
+        <td><code>&lt;button&gt;</code> · mín. 32×32px desktop</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Role Button (login)</strong></td>
+        <td><code>.role-btn</code></td>
+        <td>default · hover</td>
+        <td>5 roles</td>
+        <td><code>&lt;button&gt;</code> · aria-label por rol</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Input / Select / Textarea</strong></td>
+        <td>nativos</td>
+        <td>default · focus · placeholder · disabled</td>
+        <td>text/email/tel/date/number/time/pw</td>
+        <td><code>for=id</code> asociado · <code>required</code> · <code>aria-required</code></td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Stat Card</strong></td>
+        <td><code>.stat</code></td>
+        <td>default</td>
+        <td>c-acc / c-ok / c-err / c-warn</td>
+        <td>aria-live para contadores dinámicos</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Badge</strong></td>
+        <td><code>.badge .b-*</code></td>
+        <td>default</td>
+        <td>ok / err / warn / mut</td>
+        <td>Color no es único indicador (texto incluido)</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Alert</strong></td>
+        <td><code>.alert .al-*</code></td>
+        <td>default</td>
+        <td>warn / err / ok / info</td>
+        <td>Ícono SVG + texto · border-left acento</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Toast</strong></td>
+        <td><code>.toast .is-*</code></td>
+        <td>slideIn · visible · slideOut</td>
+        <td>ok / err / warn / info</td>
+        <td><code>aria-live="polite"</code> en contenedor</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Modal</strong></td>
+        <td><code>.modal-backdrop .modal</code></td>
+        <td>closed · open (fadeIn)</td>
+        <td>—</td>
+        <td>Cierre Escape · click backdrop · <code>role="dialog"</code> pendiente</td>
+        <td><span class="chip chip-warn">7/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Quick Action</strong></td>
+        <td><code>.qa</code></td>
+        <td>default · hover (translateY + borde)</td>
+        <td>—</td>
+        <td><code>&lt;button&gt;</code> recomendado (actualmente div+onclick)</td>
+        <td><span class="chip chip-warn">7/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Sidebar Item</strong></td>
+        <td><code>.sb-item</code></td>
+        <td>default · hover · active</td>
+        <td>—</td>
+        <td><code>&lt;button&gt;</code> · <code>border-left</code> accent en active</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tabla</strong></td>
+        <td><code>table th td</code></td>
+        <td>default · row-hover</td>
+        <td>—</td>
+        <td><code>scope="col"</code> en th · <code>&lt;caption class="sr-only"&gt;</code> pendiente</td>
+        <td><span class="chip chip-warn">7/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Attendance Card</strong></td>
+        <td><code>.att-card</code></td>
+        <td>default · is-p · is-a · is-blocked</td>
+        <td>—</td>
+        <td>Botones Presente/Ausente con disabled en deudor</td>
+        <td><span class="chip chip-ok">9/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Notif Item</strong></td>
+        <td><code>.notif-item</code></td>
+        <td>unread · read · hover</td>
+        <td>n-warn / n-err / n-ok / n-info</td>
+        <td>aria-live en contenedor padre</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+      <tr>
+        <td><strong>Cron Slot</strong></td>
+        <td><code>.cron-slot</code></td>
+        <td>default · hover</td>
+        <td>badge color por cupo</td>
+        <td>onclick navega a detalle-clase</td>
+        <td><span class="chip chip-ok">8/10</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ 6. ACCESIBILIDAD ══════════════ -->
+<div class="page">
+  <h2>06 · Accesibilidad (WCAG 2.1 AA)</h2>
+
+  <h3>Implementado en v4</h3>
+  <table class="comp-table">
+    <thead><tr><th>Issue</th><th>Criterio</th><th>Solución</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Sidebar items <code>&lt;div onclick&gt;</code></td><td>2.1.1</td><td><code>&lt;button class="sb-item"&gt;</code></td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td>Role buttons login</td><td>2.1.1</td><td><code>&lt;button&gt;</code> nativos</td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td>Focus ring global</td><td>2.4.7</td><td><code>:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px }</code></td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td><code>--mut</code> contraste límite</td><td>1.4.3</td><td>Subido de #777 a #9FA0A8 (5.1:1)</td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td>alert() intrusivos</td><td>3.3.1</td><td>Sistema de toasts no bloqueantes con <code>aria-live="polite"</code></td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td>Modal sin roles ARIA</td><td>4.1.2</td><td>Cierre Escape + click backdrop</td><td><span class="chip chip-warn">⚠ Parcial</span></td></tr>
+      <tr><td>Mobile sin navegación</td><td>2.1.1</td><td>Hamburger + drawer sidebar con overlay</td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+      <tr><td>Icons solo emoji</td><td>1.1.1</td><td>SVG inline sprite con <code>aria-hidden="true"</code></td><td><span class="chip chip-ok">✔ Resuelto</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pendiente para producción</h3>
+  <table class="comp-table">
+    <thead><tr><th>Issue</th><th>Criterio</th><th>Recomendación</th></tr></thead>
+    <tbody>
+      <tr><td>Modal sin <code>role="dialog"</code> + focus trap</td><td>4.1.2</td><td>Agregar <code>role="dialog" aria-modal="true" aria-labelledby="modal-title"</code> y focus trap con Tab/Shift+Tab</td></tr>
+      <tr><td>Quick actions como <code>&lt;div&gt;</code></td><td>2.1.1</td><td>Convertir <code>.qa</code> a <code>&lt;button&gt;</code> o <code>&lt;a&gt;</code></td></tr>
+      <tr><td>Tablas sin <code>scope</code> ni <code>&lt;caption&gt;</code></td><td>1.3.1</td><td>Agregar <code>scope="col"</code> en <code>&lt;th&gt;</code> y <code>&lt;caption class="sr-only"&gt;</code></td></tr>
+      <tr><td>Skip-link</td><td>2.4.1</td><td><code>&lt;a href="#main-area" class="sr-only sr-only-focusable"&gt;Saltar al contenido&lt;/a&gt;</code></td></tr>
+      <tr><td>document.title y history.pushState</td><td>4.1.2</td><td>Actualizar en cada <code>go()</code> para que el SR anuncie el cambio de pantalla</td></tr>
+      <tr><td>Checkbox DJ fuera de label</td><td>1.3.1</td><td>Envolver: <code>&lt;label&gt;&lt;input type="checkbox"&gt;&lt;span&gt;...&lt;/span&gt;&lt;/label&gt;</code></td></tr>
+      <tr><td>Touch targets &lt; 44px</td><td>2.5.5</td><td>Mínimo 44×44px en <code>@media (pointer:coarse)</code> para .ab</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ 7. BREAKPOINTS ══════════════ -->
+<div class="page">
+  <h2>07 · Breakpoints y Responsive</h2>
+
+  <div class="bp-timeline">
+    <div class="bp-seg">
+      <strong>≤ 600px</strong>
+      <div class="bp-desc">Mobile S</div>
+      <div style="margin-top:.4rem;font-size:.65rem;color:var(--mut)">Login panel derecho oculto · Grids 1 col · Role btns 2 col · Stats 2 col</div>
+    </div>
+    <div class="bp-seg active">
+      <strong>≤ 768px</strong>
+      <div class="bp-desc">Mobile / Tablet</div>
+      <div style="margin-top:.4rem;font-size:.65rem;color:var(--acc)">Hamburger visible · Sidebar = drawer fijo con overlay backdrop · Footer att left:0</div>
+    </div>
+    <div class="bp-seg">
+      <strong>≤ 900px</strong>
+      <div class="bp-desc">Tablet grande</div>
+      <div style="margin-top:.4rem;font-size:.65rem;color:var(--mut)">g4 → 2 col · g3 → 2 col · Role btns 3 col</div>
+    </div>
+    <div class="bp-seg">
+      <strong>&gt; 900px</strong>
+      <div class="bp-desc">Desktop</div>
+      <div style="margin-top:.4rem;font-size:.65rem;color:var(--mut)">Layout completo · Sidebar fija 220px · Main fluid</div>
+    </div>
+  </div>
+
+  <h3>Comportamiento por elemento</h3>
+  <table class="comp-table">
+    <thead><tr><th>Elemento</th><th>Desktop</th><th>≤900px</th><th>≤768px</th><th>≤600px</th></tr></thead>
+    <tbody>
+      <tr><td>Sidebar</td><td>Fija 220px</td><td>Fija 220px</td><td>Drawer (transform X)</td><td>Drawer</td></tr>
+      <tr><td>Hamburger</td><td>Oculto</td><td>Oculto</td><td>Visible</td><td>Visible</td></tr>
+      <tr><td>Grid 4 col (.g4)</td><td>4 col</td><td>2 col</td><td>2 col</td><td>1 col</td></tr>
+      <tr><td>Form .fr</td><td>2 col</td><td>2 col</td><td>2 col</td><td>1 col</td></tr>
+      <tr><td>Att footer</td><td>left:220px</td><td>left:0</td><td>left:0</td><td>left:0</td></tr>
+      <tr><td>Login panel derecho</td><td>Visible 42%</td><td>Visible</td><td>Visible</td><td>Oculto</td></tr>
+      <tr><td>Role btns</td><td>5 col</td><td>3 col</td><td>3 col</td><td>2 col</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ 8. PERMISOS ══════════════ -->
+<div class="page">
+  <h2>08 · Matriz de Permisos (PERMS)</h2>
+  <p>Fuente única de verdad implementada en <code>const PERMS</code> del archivo JS. <code>can(p)</code> evalúa el permiso del rol activo.</p>
+
+  <table class="perm-table">
+    <thead>
+      <tr>
+        <th>Acción</th>
+        <th>Admin</th><th>Encargado</th><th>Secretaria</th><th>Profesor</th><th>Alumno</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>navAl — Ver lista alumnos</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>addAl — Agregar alumno</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>editAl — Modificar alumno</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>delAl — Baja alumno</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>viewAl — Ver ficha alumno</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>navCl — Ver lista clases</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-n">—</td></tr>
+      <tr><td>addCl — Agregar clase</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>editCl — Modificar clase</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>delCl — Baja clase</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>att — Tomar asistencia</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-y">✔</td><td class="perm-n">—</td></tr>
+      <tr><td>portal — Portal alumno</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-y">✔</td></tr>
+      <tr><td>Registrar pago</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>Componer notificación</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td><td class="perm-n">—</td></tr>
+      <tr><td>Cronograma / Horas / Obs</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-y">✔</td><td class="perm-n">—</td></tr>
+      <tr><td>Pagar cuota propia</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-n">—</td><td class="perm-y">✔</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ 9. REQUISITOS IMPLEMENTADOS ══════════════ -->
+<div class="page">
+  <h2>09 · Trazabilidad de Requisitos (ERS)</h2>
+  <p>Mapa entre cada requisito de la ERS y la pantalla/función del prototipo donde se implementó.</p>
+
+  <table class="req-table">
+    <thead><tr><th>Req.</th><th>Descripción</th><th>Pantalla / Función</th><th>Versión</th></tr></thead>
+    <tbody>
+      <tr><td class="req-id">3.1.11a</td><td>Datos de salud en ficha alumno</td><td>Form Alumno — sección Salud · Ficha Alumno</td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.11b</td><td>DJ persistente y consultable</td><td><code>openVerDJ()</code> · modal con condiciones y estado</td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.11c</td><td>Validación DNI duplicado</td><td><code>saveAlumno()</code> · <code>normalizarDNI()</code></td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.13a/b/c</td><td>Registrar pagos, emitir recibos</td><td><code>openRegistrarPago()</code> · <code>verRecibo()</code> · modal recibo imprimible</td><td><span class="chip chip-acc">v3.2</span></td></tr>
+      <tr><td class="req-id">3.1.14b</td><td>Restricción de acceso a deudores</td><td>Att card <code>.is-blocked</code> · botones disabled</td><td><span class="chip chip-acc">v3.2</span></td></tr>
+      <tr><td class="req-id">3.1.18a/b</td><td>Componer notificaciones con plantillas</td><td><code>openComposeNotif()</code> · <code>NOTIF_TEMPLATES</code></td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.19a/b/c</td><td>Cronograma semanal del profesor</td><td><code>renderCronograma()</code> · tabla semanal con slots</td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.20c</td><td>Alerta ≥3 ausencias injustificadas</td><td><code>saveAtt()</code> — streak check · toast a secretaría</td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.21c</td><td>Aceptar/rechazar asignación</td><td>Cronograma — alert con botones Aceptar/Rechazar</td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.22a/b/c</td><td>Observaciones del profesor</td><td><code>openNuevaObs()</code> · <code>renderObservaciones()</code></td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.23a/b/c</td><td>Horas trabajadas + alerta diferencia</td><td><code>renderHoras()</code> · totalizador + <code>#horas-diff-alert</code></td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.24a/b/c</td><td>Pagar cuota (QR, transfer, tarjeta)</td><td><code>openPagarCuota()</code> · <code>selectPayMethod()</code> · recibo</td><td><span class="chip chip-acc">v3.2</span></td></tr>
+      <tr><td class="req-id">3.1.25a/b</td><td>Filtro plan en Mi Plan y alerta fuera</td><td><code>PLAN_INCLUYE</code> · <code>renderMiPlan()</code> · rows bloqueadas</td><td><span class="chip chip-acc">v3.2</span></td></tr>
+      <tr><td class="req-id">3.1.26b</td><td>Promociones activas al momento del pago</td><td><code>PROMOS_VIGENTES</code> · modal pagar cuota</td><td><span class="chip chip-acc">v3.2</span></td></tr>
+      <tr><td class="req-id">3.1.27b</td><td>Ausencia justificada vs injustificada</td><td><code>setAttReason()</code> · badges JUSTIF/INJUST</td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.28a/b/c</td><td>DJ firmada con vencimiento anual</td><td><code>finishInscripcion()</code> · <code>djEstado()</code> · <code>djBadge()</code></td><td><span class="chip chip-acc">v3.3</span></td></tr>
+      <tr><td class="req-id">3.1.6–3.1.9</td><td>Dashboard diferenciado Encargado</td><td><code>renderDashboard()</code> rama encargado — inscriptos del día, prof ausente, novedades</td><td><span class="chip chip-ok">v4.0</span></td></tr>
+      <tr><td class="req-id">3.1.33c</td><td>Acceso multi-sede</td><td>Selector de sede en login · <code>ST.sede</code> en toda la app</td><td><span class="chip chip-ok">v4.0</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Fuera del alcance de este módulo</h3>
+  <p style="font-size:.82rem;color:#B0B0B8">Req. 3.1.1 (ABM usuarios) · 3.1.2 (config. promociones) · 3.1.3 (reportes consolidados) · 3.1.4 (auditoría) · 3.1.10/3.1.15 (kiosco) · 3.1.30 (reportes automáticos) · 3.1.32 (AFIP/medios pago reales). Documentados como fuera de alcance, no implementados ni simulados.</p>
+</div>
+
+<!-- ══════════════ 10. NOTAS FINALES ══════════════ -->
+<div class="page">
+  <h2>10 · Notas para Producción</h2>
+
+  <h3>Backend / Integración</h3>
+  <p>El prototipo usa una base de datos en memoria (<code>const DB = { ... }</code>) que simula todas las operaciones CRUD. En producción, cada función deberá reemplazar sus operaciones sobre <code>DB</code> por llamadas a la API REST correspondiente. Los helpers <code>toast()</code>, <code>openModal()</code> y <code>money()</code> son reutilizables sin cambios.</p>
+
+  <h3>Persistencia de sesión</h3>
+  <p>La Fase 4C implementa persistencia de sesión en <code>localStorage</code> con clave <code>sg_session</code> y TTL de 7 días. En producción esto debe reemplazarse por tokens JWT con refresh token en <code>httpOnly cookies</code>.</p>
+
+  <h3>Exportación PDF / Excel</h3>
+  <p>Las funciones <code>exportHistorial('pdf')</code> y <code>window.print()</code> son stubs. En producción: PDF con librería como <em>jsPDF</em> o generación server-side; Excel con <em>SheetJS</em>. El recibo digital ya es imprimible vía <code>window.print()</code>.</p>
+
+  <h3>Iconografía</h3>
+  <p>Todos los íconos son SVG inline referenciados desde el sprite <code>&lt;svg aria-hidden&gt;&lt;defs&gt;...&lt;/defs&gt;&lt;/svg&gt;</code> al inicio del body. El set proviene de <strong>Lucide Icons</strong> (stroke, 24×24). Para producción, usar el paquete npm <code>lucide</code> o el CDN oficial.</p>
+
+  <h3>Restricciones de la ERS cumplidas</h3>
+  <div class="alert-box al-ok">
+    <div><strong>Restricción 2.4 — Alertas no intrusivas:</strong> Todos los <code>alert()</code> reemplazados por toasts no bloqueantes con <code>aria-live="polite"</code>. Preferencia explícita del encargado en entrevista (NOTAS_SESION.md, pag. 3).</div>
+  </div>
+  <div class="alert-box al-ok">
+    <div><strong>Restricción 2.4 — Multi-dispositivo:</strong> Breakpoints implementados para PC, notebook y celulares. Sidebar hamburger + drawer en ≤768px. Layouts apilados en ≤600px.</div>
+  </div>
+  <div class="alert-box al-warn">
+    <div><strong>Pendiente para defensa:</strong> Agregar <code>role="dialog"</code> + focus trap en el modal genérico, <code>scope="col"</code> en tablas, y skip-link antes de publicar en producción.</div>
+  </div>
+</div>
+
+<div class="doc-footer">
+  SQUATGYM · Sistema Integrado de Gestión · TPI Diseño 2026 · Documento de Handoff v4.0 · Generado 23/04/2026
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">
+  <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+  Imprimir / PDF
+</button>
+
+</body>
+</html>
