@@ -400,7 +400,7 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 │          Ranking de Clases con Más Inscriptos del Mes                       │
 │          Emitido el: [__]/[__]/[____]                                       │
 │                                                                             │
-│  Mes: [________]     Año: [____]     Top: [__] clases                       │
+│  Mes: [________]     Año: [____]                                            │
 ├═════════════════════════════════════════════════════════════════════════════┤
 │                                                                             │    
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
@@ -427,6 +427,6 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 │                                                                             │
 │  Total inscriptos por mes: [_____]                                          │ <- PIE
 │                                                                             │
-│  Fecha: [__]/[__]/[____]                                                    │
+│  Porcentaje de ocupacion: [%____]                                           │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
