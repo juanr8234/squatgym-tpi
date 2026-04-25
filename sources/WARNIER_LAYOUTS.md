@@ -392,6 +392,7 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 - VS Code con la extensión *PlantUML* (jebbs.plantuml) → Alt+D sobre el bloque.
 
 ---
+```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ [Logo]                                                  Pág. [__] / [__]    │  <- CABECERA
 │                                                                             │     general
@@ -427,3 +428,4 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 │                                                                             │
 │  Emitido por: [__________________]             Fecha: [__/__/____]          │
 └─────────────────────────────────────────────────────────────────────────────┘
+```
