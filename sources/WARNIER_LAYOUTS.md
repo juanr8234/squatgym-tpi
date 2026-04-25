@@ -392,12 +392,13 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 - VS Code con la extensión *PlantUML* (jebbs.plantuml) → Alt+D sobre el bloque.
 
 ---
+**## Ranking de clases ##**
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ [Logo]                                                  Pág. [__] / [__]    │  <- CABECERA
+│                                                         Pág. [__] / [__]    │  <- CABECERA
 │                                                                             │     general
 │          Ranking de Clases con Más Inscriptos del Mes                       │
-│          Emitido el: [__/__/____]                                           │
+│          Emitido el: [__]/[__]/[____]                                       │
 │                                                                             │
 │  Mes: [________]     Año: [____]     Top: [__] clases                       │
 ├═════════════════════════════════════════════════════════════════════════════┤
@@ -421,11 +422,11 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 │                                                                             │
 │                                                                             │
 │                                                                             │
-│                                                                             │  <- PIE
+│                                                                             │  
 │                                                                             │
 │                                                                             │
+│  Total inscriptos por mes: [_____]                                          │ <- PIE
 │                                                                             │
-│                                                                             │
-│  Emitido por: [__________________]             Fecha: [__/__/____]          │
+│  Fecha: [__]/[__]/[____]                                                    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
