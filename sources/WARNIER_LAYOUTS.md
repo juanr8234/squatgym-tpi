@@ -392,7 +392,7 @@ Los bloques `@startwbs ... @endwbs` se renderizan en:
 - VS Code con la extensión *PlantUML* (jebbs.plantuml) → Alt+D sobre el bloque.
 
 ---
-** Ranking de clases **
+## Ranking de clases ##
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                         Pág. [__] / [__]    │  <- CABECERA
